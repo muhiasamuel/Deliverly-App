@@ -1,21 +1,32 @@
-import { StatusBar } from 'expo-status-bar';
 import React from 'react';
-import { StyleSheet, Text, View } from 'react-native';
+import { createStackNavigator } from '@react-navigation/stack'
+import { LogBox,  StatusBar,  StyleSheet, Text, View } from 'react-native'
+import { AuthenticatedUserProvider } from './AuthProvider/AuthProvider';
+import RootNavigator from './appStack/RootNavigator';
+import {  DarkTheme as PaperDarkTheme, DefaultTheme, Provider as PaperProvider,Colors } from 'react-native-paper';
+const App = () => {
+     const theme = {
+          ...DefaultTheme,
+          roundness: 2,
+          mode:'adaptive',
+          colors: {
+            ...DefaultTheme.colors,
+            primary: '#3498db',
+            accent: '#f1c40f',
+            text:'white',
+            background:Colors.amber100
+          },
+        };
+     
+ return ( 
+     <PaperProvider theme={PaperDarkTheme}>
+      <AuthenticatedUserProvider>
+           <StatusBar style = 'dark' />
+           <RootNavigator/>
+      </AuthenticatedUserProvider>
+      </PaperProvider>
+  )
 
-export default function App() {
-  return (
-    <View style={styles.container}>
-      <Text>Open up App.js to start working on your app!</Text>
-      <StatusBar style="auto" />
-    </View>
-  );
 }
 
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: '#fff',
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-});
+export default App
