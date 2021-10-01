@@ -2,7 +2,7 @@
 
 import React from "react";
 import { createStackNavigator } from '@react-navigation/stack'
-import { Home, MyAccount, Orders } from "../screens";
+import { AssignedOrder, Home, MyAccount, Orders } from "../screens";
 import { COLORS } from "../constants/Index";
 
 const Stack = createStackNavigator();
@@ -20,6 +20,7 @@ const MainStackNavigator = () => {
   return (
     <Stack.Navigator screenOptions={screenOptionStyle}>
       <Stack.Screen options={{title: 'Home'}} name="adminHome" component={Home} />
+      <Stack.Screen options={{title: 'Current Assigned Order'}} name="viewOrder" component={AssignedOrder} />
     </Stack.Navigator>
   );
 }

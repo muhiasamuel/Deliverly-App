@@ -7,7 +7,7 @@ import "firebase/firestore";
 import { AuthenticatedUserContext } from '../AuthProvider/AuthProvider';
 import Firebase from '../firebaseConfig';
 import { Modal, Text, View,StyleSheet,TouchableOpacity } from 'react-native';
-import { COLORS } from '../constants/Index';
+import { COLORS, SIZES } from '../constants/Index';
 import { ActivityIndicator, Colors } from 'react-native-paper';
 
 const Stack = createStackNavigator();
@@ -17,6 +17,7 @@ const AppScreens = ({navigation}) => {
   const { user, AuthUserRole, setAuthUserRole } = React.useContext
   (AuthenticatedUserContext);
   const [submitting, setissubmitting] = React.useState(false);
+  const [isLoading, setisloading] = React.useState(false);
 
   React.useEffect(() =>{
 
@@ -24,15 +25,16 @@ const AppScreens = ({navigation}) => {
        },[])
 
   const checkRole =async()=>{
+    setisloading(true)
     try{
       const response =   Firebase.firestore().collection('Deliverly Persons').where('uid', '==', user.uid)
       await response.onSnapshot((querySnapshot) =>{
         querySnapshot.forEach((doc)=>{
           if (doc.exists) {
             setAuthUserRole(doc.data())
+            setisloading(false)
           } else {
-            Alert.alert(`You are not Authorised to use this app`)
-             auth.signOut();
+            setisloading(false)
           }
          
         })
@@ -61,6 +63,7 @@ const AppScreens = ({navigation}) => {
       console.log(e);
     }       
   }
+  
   const acceptOrder = async(key) => {  
     setissubmitting(true)
     
@@ -82,7 +85,15 @@ const AppScreens = ({navigation}) => {
         }
 
   };
-  console.log(AuthUserRole);
+    const auth = Firebase.auth();
+    const LogOutUser = async function() {
+        try {
+            await auth.signOut().then(()=>{
+            })
+          } catch (error) {
+            console.log(error);
+          }
+    }
   function RenderModal(){
     return (
       <View style={styles.container}>
@@ -127,11 +138,25 @@ const AppScreens = ({navigation}) => {
     </>
      : 
      <View></View>
-     }   
+     } 
+     {AuthUserRole?.role == `Deliverly Person`?  
     
      <NavigationContainer>
         <Tabs/>
    </NavigationContainer>
+ 
+   :
+ 
+   <View style={[styles.centeredView,{backgroundColor:COLORS.backgroundColor,padding:SIZES.padding2}]}>
+     <Text style={{color:COLORS.white,alignSelf:'center'}}>Hello {user?.email}. Sorry you are not Authorised to use this application!</Text>
+     <TouchableOpacity
+     style={styles.btn}
+     onPress={()=> LogOutUser()}
+     >
+       <Text>Log Out</Text>
+     </TouchableOpacity>
+   </View>
+      }
    </>
   )
 
@@ -167,6 +192,14 @@ const styles = StyleSheet.create({
     marginBottom: 15,
     textAlign: 'center',
   },
+  btn: {
+    backgroundColor:Colors.amber800,
+    padding:SIZES.padding2,
+    borderColor:Colors.grey300,
+    borderWidth:2,
+    borderRadius:10,
+    alignSelf:'center'
+  }
 });
 
 export default AppScreens

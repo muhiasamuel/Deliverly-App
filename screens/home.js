@@ -6,7 +6,7 @@ import { COLORS, FONTS, SIZES } from '../constants/Index';
 import 'firebase/firestore';
 import Firebase from '../firebaseConfig';
 
-const Home = () => {
+const Home = ({navigation}) => {
     const { user, AuthUserRole} = React.useContext(AuthenticatedUserContext);
 
   const [isSwitchOn, setIsSwitchOn] = React.useState(false);
@@ -33,6 +33,22 @@ const Home = () => {
 
   };
 
+  console.log(AuthUserRole?.key);
+
+ const handleOrderView = async() =>{
+    try{
+      const response =   Firebase.firestore().collection('Deliverly Persons').doc(AuthUserRole?.key);
+      const data = await response.collection('my Deliveries').where('status',"==", 'Dispatched').get();
+      data.docs.forEach(item=>{
+        navigation.navigate('viewOrder',{
+          item:item.data()
+        })
+        console.log(item.data());
+      })
+    }catch(e){
+      console.log(e);
+    }
+  }
   return (
 
     <ScrollView style={styles.container}> 
@@ -73,6 +89,28 @@ const Home = () => {
             </View>
         </View>       
       </View> 
+      {AuthUserRole.Status ==`Deliverly Pending`?
+      <>
+            <TouchableOpacity style={[styles.card,{backgroundColor:Colors.blue500}]}
+              onPress={() =>handleOrderView()}
+            >
+   
+            <View style={{width:SIZES.width*0.9,paddingHorizontal:10}}>
+              <Title style={styles.Text}>Check this new Assigned Order</Title>
+              
+                    <Title>Status:{AuthUserRole?.Status}</Title>
+                    <View style={styles.card1} >
+                    <Text style={{...FONTS.body3,color:Colors.grey400}}>Click Here</Text>
+                   
+                </View>
+            </View>       
+          </TouchableOpacity> 
+          <Divider/>
+          </>
+          :
+          <View></View>
+      }          
+
       <Divider/>
       <TouchableOpacity style={[styles.card,{backgroundColor:Colors.orange800}]}>
    
