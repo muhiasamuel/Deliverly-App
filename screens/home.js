@@ -12,6 +12,7 @@ const Home = ({navigation}) => {
 
   const [isSwitchOn, setIsSwitchOn] = React.useState(false);
   const [submittin, setissubmittin] = React.useState(false);
+  const [currentOrder, setcurrentOrder] = React.useState('');
 
   const onToggleSwitch = async(key) => {  
     setissubmittin(true)
@@ -41,6 +42,7 @@ const Home = ({navigation}) => {
       const response =   Firebase.firestore().collection('Deliverly Persons').doc(AuthUserRole?.key);
       const data = await response.collection('my Deliveries').where('status',"==", 'Dispatched').get();
       data.docs.forEach(item=>{
+        setcurrentOrder(item.data())
         navigation.navigate('viewOrder',{
           item:item.data()
         })
@@ -67,7 +69,7 @@ const Home = ({navigation}) => {
         <View style={{width:SIZES.width*0.75,paddingHorizontal:15}}>
           <Title style={styles.Text}>welcome! {AuthUserRole?.username}</Title>
           
-                <Title style={{color:Colors.teal300}}>Status:{AuthUserRole?.Status}</Title>
+                <Title style={{color:Colors.teal700}}>Status:{AuthUserRole?.Status}</Title>
                 <View style={styles.card1} >
 
                 {AuthUserRole?.Status == `Active` ?
@@ -93,24 +95,74 @@ const Home = ({navigation}) => {
             </View>
         </View>       
       </View> 
-      {AuthUserRole.Status !==`Active` || AuthUserRole.Status !==`Accepting Orders`?
-      <>
-            <TouchableOpacity style={[styles.card,{backgroundColor:Colors.blue500}]}
+      {
+      (AuthUserRole?.Status !==`Active` && AuthUserRole?.Status !=="Accepting Orders")?
+      <View style={{flexDirection:'row',justifyContent:'space-between',padding:SIZES.padding*0.5,width:SIZES.width*0.99}}>
+            <TouchableOpacity style={[styles.card,{backgroundColor:Colors.grey200,width:SIZES.width*0.47}]}
               onPress={() =>handleOrderView()}
             >
    
-            <View style={{width:SIZES.width*0.9,paddingHorizontal:10}}>
-              <Title style={styles.Text}>Check this new Assigned Order</Title>
-              
-                    <Title>Status:{AuthUserRole?.Status}</Title>
-                    <View style={styles.card1} >
-                    <Text style={{...FONTS.body3,color:Colors.grey400}}>Click Here</Text>
+            <View style={{paddingHorizontal:10}}>
+                <>
+                  {
+                  (AuthUserRole?.Status !==`Deliverly Pending` && AuthUserRole?.Status !==`Accepting Orders`) ?
+                   
+               
+                  <View style={styles.card1}>
+                    <Title style={[styles.Text,{color:Colors.teal900,...FONTS.body4,width:SIZES.width*0.37}]}>You are Now Commited To delivering this order</Title>
+                    
+                    <Badge style={{backgroundColor:Colors.cyan600}}>1</Badge>
+                  </View>
+                  :
+                  <View style={styles.card1}>
+                  <Title style={[styles.Text,{color:Colors.teal900,width:SIZES.width*0.37}]}>Check this newly Assigned Order Here</Title>
+                  <Badge >1</Badge>
+                  </View>
+                  }
+                  </>
+
+                    <View style={[styles.card1,{justifyContent:'space-around'}]} >
+                    <Text style={{...FONTS.body3,color:Colors.grey900,width:SIZES.width*0.30}}>Click Here To Check It Out</Text>
+                    <AntDesign name="rightcircleo" size={34} color="black" />
                    
                 </View>
             </View>       
           </TouchableOpacity> 
           <Divider/>
-          </>
+          <View style={[styles.card,{backgroundColor:Colors.grey200,width:SIZES.width*0.47}]}
+              
+            >
+   
+            <View style={{paddingHorizontal:10}}>
+                <>
+                  {
+                  AuthUserRole?.Status !==`Deliverly Pending` ?
+                   
+               <>
+                  <View style={styles.card1}>
+                    <Title style={[styles.Text,{color:Colors.teal900,...FONTS.body4,width:SIZES.width*0.37}]}>Finish Delivering My Current Order</Title>                   
+                    <Foundation name="loop" size={28} color="black" />
+                  </View>
+                  <TouchableOpacity style={[styles.card1,{justifyContent:'space-around'}]} 
+                    onPress={() =>handleOrderView()}
+                    >
+                    <Text style={{...FONTS.body3,color:Colors.grey900,width:SIZES.width*0.30}}>Click Here To complete DeliveringYour Order</Text>
+                    <FontAwesome name="arrow-circle-o-right" size={28} color="black" />
+                    
+                    </TouchableOpacity>
+                    </>
+                  :
+                  <View style={styles.card1}>
+                    <Text style={{width:SIZES.width*0.30}}>Finish Delivering</Text>                    
+                    <ActivityIndicator animating={true} color={Colors.brown700}/> 
+                  </View>
+                  }
+                  </>
+
+
+            </View>       
+          </View>
+          </View>
           :
           <View></View>
       }          
@@ -175,10 +227,10 @@ const Home = ({navigation}) => {
         </View>       
       </TouchableOpacity> 
       <Divider/>
-      <TouchableOpacity style={[styles.card,{backgroundColor:Colors.orange400}]}>
+      <TouchableOpacity style={[styles.card,{backgroundColor:Colors.grey200}]}>
    
    <View style={{width:SIZES.width*0.9,paddingHorizontal:10}}>
-     <Title style={styles.Text}>My Account </Title>
+     <Title style={styles.Text}>Finish Current Order Deliverly</Title>
      
            <Title>Status:{AuthUserRole?.Status}</Title>
            <View style={styles.card1} >

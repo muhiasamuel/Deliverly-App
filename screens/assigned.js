@@ -125,10 +125,13 @@ const AssignedOrder = ({route, navigation}) => {
                         </View>  
                          
                     </View>
+                    {AuthUserRole?.Status !== `delivering ${orderItem?.customerName} order`?
+                    <>
                     <Text style={[styles.btntext,{...FONTS.body1}]}>Actions:</Text>
                     <Text style={[styles.btntext,{...FONTS.body5}]}>Click this button only if you have picked all items above from the store. ENSURE YOU TRIPPLE CHECK (CORRECT ITEMS AND QUANTITY). IMPORTANT!!:</Text>
 
                     <View style={[styles.centered,{paddingHorizontal:SIZES.padding2,alignSelf:'center'}]}> 
+                    
                     <TouchableOpacity
                     onPress={() => handledeliver()}
                      style={styles.btnContinue}
@@ -136,8 +139,14 @@ const AssignedOrder = ({route, navigation}) => {
                     >
                      
                       <Text style={[styles.btntext,{...FONTS.h4,color:COLORS.white}]}>Deliver</Text>
+                      
                     </TouchableOpacity>
+                    
                     </View>
+                    </>
+                    :
+                    <Text></Text>
+                        }
                 </View>
             </View>
         )
