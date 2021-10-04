@@ -44,25 +44,7 @@ const AppScreens = ({navigation}) => {
       console.log(e);
     }       
   } 
-  const checkOrders =async()=>{
-    try{
-      const response =   Firebase.firestore().collection('Deliverly Persons').where('uid', '==', user.uid)
-      await response.onSnapshot((querySnapshot) =>{
-        querySnapshot.forEach((doc)=>{
-          if (doc.exists) {
-            setAuthUserRole(doc.data())
-          } else {
-            Alert.alert(`You are not Authorised to use this app`)
-             auth.signOut();
-          }
-         
-        })
-      })
-    }
-    catch(e){
-      console.log(e);
-    }       
-  }
+ 
   
   const acceptOrder = async(key) => {  
     setissubmitting(true)
@@ -127,9 +109,7 @@ const AppScreens = ({navigation}) => {
         </Modal>
       </View>
     );
-  }
-
- 
+  } 
   return ( 
     <> 
     {AuthUserRole?.Status == `Assigned`?

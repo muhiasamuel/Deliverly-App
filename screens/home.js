@@ -1,10 +1,11 @@
 import * as React from 'react';
 import { StyleSheet, _View,View, TouchableOpacity, ScrollView  } from 'react-native';
-import { ActivityIndicator, Avatar, Banner, Button, Card, Chip, Colors, Divider, Switch, Text, Title, } from 'react-native-paper';
+import { ActivityIndicator, Avatar, Badge, Banner, Button, Card, Chip, Colors, Divider, Switch, Text, Title, } from 'react-native-paper';
 import { AuthenticatedUserContext } from '../AuthProvider/AuthProvider';
 import { COLORS, FONTS, SIZES } from '../constants/Index';
 import 'firebase/firestore';
 import Firebase from '../firebaseConfig';
+import { AntDesign, FontAwesome, FontAwesome5, Fontisto, Foundation, MaterialCommunityIcons, MaterialIcons, SimpleLineIcons } from '@expo/vector-icons';
 
 const Home = ({navigation}) => {
     const { user, AuthUserRole} = React.useContext(AuthenticatedUserContext);
@@ -52,23 +53,26 @@ const Home = ({navigation}) => {
   return (
 
     <ScrollView style={styles.container}> 
-    <View style={styles.card}>
+    <View style={[styles.card,{alignSelf:'center'}]}>
+      <View style={{width:SIZES.width*0.25}}>
       <Avatar.Image
-          size={74}
+          size={90}
           source={{
             uri: AuthUserRole?.userimage,
           }}
         
         />
+      </View>
+
         <View style={{width:SIZES.width*0.75,paddingHorizontal:15}}>
           <Title style={styles.Text}>welcome! {AuthUserRole?.username}</Title>
           
-                <Title>Status:{AuthUserRole?.Status}</Title>
+                <Title style={{color:Colors.teal300}}>Status:{AuthUserRole?.Status}</Title>
                 <View style={styles.card1} >
 
                 {AuthUserRole?.Status == `Active` ?
                  <>
-                 <Text style={{...FONTS.body3,color:Colors.grey300,width:SIZES.width*0.4}}>Switch ToStart Accepting Orders</Text>
+                 <Text style={{...FONTS.body3,color:Colors.grey900,width:SIZES.width*0.4}}>Switch ToStart Accepting Orders</Text>
                    {submittin ?
                       <ActivityIndicator animating={true} color={Colors.red800} /> 
                    :
@@ -80,7 +84,7 @@ const Home = ({navigation}) => {
                   </>
                 :
                 <View>
-                <Text style={{...FONTS.body3,color:Colors.grey300,width:SIZES.width*0.4}}>Complete Current Order To Accept New Ones</Text>
+                <Text style={{...FONTS.body3,color:Colors.grey700,width:SIZES.width*0.4}}>Complete Current Order To Accept New Ones</Text>
                 </View>
                 }             
                
@@ -89,7 +93,7 @@ const Home = ({navigation}) => {
             </View>
         </View>       
       </View> 
-      {AuthUserRole.Status ==`Deliverly Pending`?
+      {AuthUserRole.Status !==`Active` || AuthUserRole.Status !==`Accepting Orders`?
       <>
             <TouchableOpacity style={[styles.card,{backgroundColor:Colors.blue500}]}
               onPress={() =>handleOrderView()}
@@ -112,41 +116,61 @@ const Home = ({navigation}) => {
       }          
 
       <Divider/>
-      <TouchableOpacity style={[styles.card,{backgroundColor:Colors.orange800}]}>
-   
-        <View style={{width:SIZES.width*0.9,paddingHorizontal:10}}>
-          <Title style={styles.Text}>Check available Orders in Your Store</Title>
+      <View style={{flexDirection:'row',justifyContent:'space-between',padding:SIZES.padding*0.5}}>
+      <TouchableOpacity style={[styles.card,{backgroundColor:Colors.grey200,width:SIZES.width*0.47}]}>
+      
+        <View style={{paddingHorizontal:10}}>
+          <Title  style={[styles.Text,{color:COLORS.darkblue,...FONTS.body3}]}> Available Orders in my Store</Title>
+          <View style={styles.card1} >
+          <Foundation name="burst-new" size={32} color={Colors.red900} />
+          <MaterialIcons name="local-grocery-store" size={30} color={Colors.blue700} />
+          </View>
           
-                <Title>Status:{AuthUserRole?.Status}</Title>
                 <View style={styles.card1} >
-                <Text style={{...FONTS.body3,color:Colors.grey400}}>Switch ToStart Accepting Orders</Text>
+                <Text style={{...FONTS.body4,color:Colors.grey700}}>View More Here</Text>
+                <AntDesign name="rightcircleo" size={24} color="black" />
                
             </View>
+            
         </View>       
       </TouchableOpacity> 
       <Divider/>
-      <TouchableOpacity style={[styles.card,{backgroundColor:Colors.orange700}]}>
+      <TouchableOpacity style={[styles.card,{backgroundColor:Colors.grey200,width:SIZES.width*0.47}]}>
    
-        <View style={{width:SIZES.width*0.9,paddingHorizontal:10}}>
-          <Title style={styles.Text}>Check My Deliverly History </Title>
-          
-                <Title>Status:{AuthUserRole?.Status}</Title>
+        <View style={[styles.card1],{paddingHorizontal:5}}>
+          <View style={[styles.card1]}>
+            <Title style={[styles.Text,{color:COLORS.darkblue,...FONTS.body3}]}>My Deliverly History </Title>
+            <Badge>34</Badge>
+          </View>          
+          <View style={styles.card1} >
+          <MaterialCommunityIcons name="truck-delivery-outline" size={34} color="black" />
+
+          <FontAwesome5 name="shopping-cart" size={24} color="green" />
+          </View>
                 <View style={styles.card1} >
-                <Text style={{...FONTS.body3,color:Colors.grey400}}>Switch ToStart Accepting Orders</Text>
+                <Text style={{...FONTS.body4,color:Colors.grey700}}>View More Here</Text>
+                <AntDesign name="rightcircleo" size={24} color="black" />
                 
             </View>
         </View>       
-      </TouchableOpacity>        
+      </TouchableOpacity> 
+      </View>       
       <Divider/>
-      <TouchableOpacity style={[styles.card,{backgroundColor:Colors.orange500}]}>
+      <TouchableOpacity style={[styles.card,{backgroundColor:Colors.grey50,alignSelf:'center'}]}>
    
         <View style={{width:SIZES.width*0.9,paddingHorizontal:10}}>
-          <Title style={styles.Text}>My Account </Title>
-          
-                <Title>Status:{AuthUserRole?.Status}</Title>
+          <Title style={styles.Text}>My Account Settings</Title>
+          <View style={styles.card1} >
+            <FontAwesome name="user-circle-o" size={34} color="black" />
+            <View>
+              <Text>Name:{AuthUserRole?.username}</Text>
+              <Text>Email:{AuthUserRole?.Email}</Text>
+             </View>
+            <Fontisto name="player-settings" size={34} color="black" />
+          </View>
                 <View style={styles.card1} >
-                <Text style={{...FONTS.body3,color:Colors.grey400}}>Switch ToStart Accepting Orders</Text>
-                
+                <Text style={{...FONTS.body3,color:Colors.grey600}}>continue here to view or update my account</Text>
+                <AntDesign name="rightcircleo" size={24} color="black" />
             </View>
         </View>       
       </TouchableOpacity> 
@@ -177,16 +201,19 @@ const styles = StyleSheet.create({
     justifyContent:'space-around',
     alignItems:'center',
     padding:SIZES.padding2,
-    backgroundColor:Colors.deepOrange800
+    backgroundColor:Colors.grey50,
+    borderColor:Colors.cyan500,
+    borderWidth:1,
+    borderRadius:10
   },
   card1:{
     flexDirection:'row',
     paddingVertical:5,
-    justifyContent:'space-around',
+    justifyContent:'space-between',
     alignItems:'center'
   },
   Text:{
-    color:Colors.white,
+    color:Colors.grey700,
     ...FONTS.body2
   }
 });

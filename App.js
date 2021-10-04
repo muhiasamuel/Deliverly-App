@@ -13,13 +13,13 @@ const App = () => {
             ...DefaultTheme.colors,
             primary: '#3498db',
             accent: '#f1c40f',
-            text:'white',
+            text:Colors.teal600,
             background:Colors.amber100
           },
         };
      
  return ( 
-     <PaperProvider theme={PaperDarkTheme}>
+     <PaperProvider theme={theme}>
       <AuthenticatedUserProvider>
            <StatusBar style = 'dark' />
            <RootNavigator/>
