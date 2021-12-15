@@ -44,9 +44,9 @@ const Home = ({navigation}) => {
       data.docs.forEach(item=>{
         setcurrentOrder(item.data())
         navigation.navigate('viewOrder',{
-          item:item.data()
+          item:item.data(),
+          id:item.id
         })
-        console.log(item.data());
       })
     }catch(e){
       console.log(e);
@@ -55,7 +55,7 @@ const Home = ({navigation}) => {
   return (
 
     <ScrollView style={styles.container}> 
-    <View style={[styles.card,{alignSelf:'center'}]}>
+    <View style={[styles.card,{alignSelf:'center',backgroundColor:Colors.grey800}]}>
       <View style={{width:SIZES.width*0.25}}>
       <Avatar.Image
           size={90}
@@ -66,27 +66,29 @@ const Home = ({navigation}) => {
         />
       </View>
 
-        <View style={{width:SIZES.width*0.75,paddingHorizontal:15}}>
+        <View style={{width:SIZES.width*0.7,paddingHorizontal:15}}>
           <Title style={styles.Text}>welcome! {AuthUserRole?.username}</Title>
           
-                <Title style={{color:Colors.teal700}}>Status:{AuthUserRole?.Status}</Title>
+                <Title style={{color:Colors.grey50}}>Status:{AuthUserRole?.Status}</Title>
                 <View style={styles.card1} >
 
                 {AuthUserRole?.Status == `Active` ?
                  <>
-                 <Text style={{...FONTS.body3,color:Colors.grey900,width:SIZES.width*0.4}}>Switch ToStart Accepting Orders</Text>
+                 <Text style={{...FONTS.body3,color:Colors.grey300,width:SIZES.width*0.35}}>Switch ToStart Accepting Orders</Text>
                    {submittin ?
                       <ActivityIndicator animating={true} color={Colors.red800} /> 
                    :
-                   <Button icon="switch" mode="contained" onPress={() =>onToggleSwitch(AuthUserRole?.key)}>
-                     Press me
-                   </Button>
+                   <TouchableOpacity
+                   style={{backgroundColor:Colors.lightBlue400,paddingHorizontal:15,paddingVertical:10}}
+                    onPress={() =>onToggleSwitch(AuthUserRole?.key)}>
+                      <Text style={{color:COLORS.white}}>Accept Orders</Text>                       
+                   </TouchableOpacity>
                  }
                 
                   </>
                 :
                 <View>
-                <Text style={{...FONTS.body3,color:Colors.grey700,width:SIZES.width*0.4}}>Complete Current Order To Accept New Ones</Text>
+                <Text style={{...FONTS.body3,color:Colors.grey400,width:SIZES.width*0.4}}>Complete Current Order To Accept New Ones</Text>
                 </View>
                 }             
                
@@ -97,8 +99,8 @@ const Home = ({navigation}) => {
       </View> 
       {
       (AuthUserRole?.Status !==`Active` && AuthUserRole?.Status !=="Accepting Orders")?
-      <View style={{flexDirection:'row',justifyContent:'space-between',padding:SIZES.padding*0.5,width:SIZES.width*0.99}}>
-            <TouchableOpacity style={[styles.card,{backgroundColor:Colors.grey200,width:SIZES.width*0.47}]}
+      <View style={{flexDirection:'row',justifyContent:'space-between',padding:SIZES.padding*0.5,width:SIZES.width}}>
+            <TouchableOpacity style={[styles.card,{backgroundColor:Colors.lightBlue800,width:SIZES.width*0.48}]}
               onPress={() =>handleOrderView()}
             >
    
@@ -109,9 +111,11 @@ const Home = ({navigation}) => {
                    
                
                   <View style={styles.card1}>
-                    <Title style={[styles.Text,{color:Colors.teal900,...FONTS.body4,width:SIZES.width*0.37}]}>You are Now Commited To delivering this order</Title>
+                    <Title style={[styles.Text,{color:Colors.teal50,...FONTS.body4,width:SIZES.width*0.37}]}>You You were Assigned to deliver this order</Title>
                     
-                    <Badge style={{backgroundColor:Colors.cyan600}}>1</Badge>
+                    <Badge style={{backgroundColor:Colors.red800}}>
+                      
+                      1</Badge>
                   </View>
                   :
                   <View style={styles.card1}>
@@ -122,14 +126,14 @@ const Home = ({navigation}) => {
                   </>
 
                     <View style={[styles.card1,{justifyContent:'space-around'}]} >
-                    <Text style={{...FONTS.body3,color:Colors.grey900,width:SIZES.width*0.30}}>Click Here To Check It Out</Text>
-                    <AntDesign name="rightcircleo" size={34} color="black" />
+                    <Text style={{...FONTS.body3,color:Colors.grey50,width:SIZES.width*0.30}}>Click Here To Check It Out</Text>
+                    <AntDesign name="rightcircleo" size={24} color={Colors.grey400} />
                    
                 </View>
             </View>       
           </TouchableOpacity> 
           <Divider/>
-          <View style={[styles.card,{backgroundColor:Colors.grey200,width:SIZES.width*0.47}]}
+          <View style={[styles.card,{backgroundColor:Colors.cyan800,width:SIZES.width*0.48}]}
               
             >
    
@@ -140,13 +144,13 @@ const Home = ({navigation}) => {
                    
                <>
                   <View style={styles.card1}>
-                    <Title style={[styles.Text,{color:Colors.teal900,...FONTS.body4,width:SIZES.width*0.37}]}>Finish Delivering My Current Order</Title>                   
+                    <Title style={[styles.Text,{color:Colors.grey50,...FONTS.body4,width:SIZES.width*0.37}]}>Finish Delivering My Current Order</Title>                   
                     <Foundation name="loop" size={28} color="black" />
                   </View>
                   <TouchableOpacity style={[styles.card1,{justifyContent:'space-around'}]} 
-                    onPress={() =>handleOrderView()}
+                    onPress = {() => navigation.navigate('ordercomplete')}
                     >
-                    <Text style={{...FONTS.body3,color:Colors.grey900,width:SIZES.width*0.30}}>Click Here To complete DeliveringYour Order</Text>
+                    <Text style={{...FONTS.body3,color:Colors.grey300,width:SIZES.width*0.30}}>Click Here To complete DeliveringYour Order</Text>
                     <FontAwesome name="arrow-circle-o-right" size={28} color="black" />
                     
                     </TouchableOpacity>
@@ -169,74 +173,91 @@ const Home = ({navigation}) => {
 
       <Divider/>
       <View style={{flexDirection:'row',justifyContent:'space-between',padding:SIZES.padding*0.5}}>
-      <TouchableOpacity style={[styles.card,{backgroundColor:Colors.grey200,width:SIZES.width*0.47}]}>
+      <TouchableOpacity style={[styles.card,{backgroundColor:Colors.cyan800,width:SIZES.width*0.48}]}
+        onPress = {() => navigation.navigate('neworders')}
+      >
       
         <View style={{paddingHorizontal:10}}>
-          <Title  style={[styles.Text,{color:COLORS.darkblue,...FONTS.body3}]}> Available Orders in my Store</Title>
+          <Title  style={[styles.Text,{color:Colors.grey100,...FONTS.body3}]}>Check New Delivery Requests</Title>
           <View style={styles.card1} >
-          <Foundation name="burst-new" size={32} color={Colors.red900} />
-          <MaterialIcons name="local-grocery-store" size={30} color={Colors.blue700} />
+          <Foundation name="burst-new" size={32} color={Colors.red600} />
+          <MaterialIcons name="local-grocery-store" size={30} color={Colors.blue200} />
           </View>
           
                 <View style={styles.card1} >
-                <Text style={{...FONTS.body4,color:Colors.grey700}}>View More Here</Text>
-                <AntDesign name="rightcircleo" size={24} color="black" />
+                <Text style={{...FONTS.body4,color:Colors.grey100}}>View More Here</Text>
+                <AntDesign name="rightcircleo" size={24} color={Colors.grey400} />
                
             </View>
             
         </View>       
       </TouchableOpacity> 
       <Divider/>
-      <TouchableOpacity style={[styles.card,{backgroundColor:Colors.grey200,width:SIZES.width*0.47}]}>
+      <TouchableOpacity style={[styles.card,{backgroundColor:Colors.blue600,width:SIZES.width*0.48}]}
+        onPress = {() => navigation.navigate('deliverlyhistory')}
+        >
    
         <View style={[styles.card1],{paddingHorizontal:5}}>
           <View style={[styles.card1]}>
-            <Title style={[styles.Text,{color:COLORS.darkblue,...FONTS.body3}]}>My Deliverly History </Title>
+            <Title style={[styles.Text,{color:Colors.grey200,...FONTS.body3}]}>My Deliverly History </Title>
             <Badge>34</Badge>
           </View>          
           <View style={styles.card1} >
-          <MaterialCommunityIcons name="truck-delivery-outline" size={34} color="black" />
+          <MaterialCommunityIcons name="truck-delivery-outline" size={34} color={Colors.grey800} />
 
-          <FontAwesome5 name="shopping-cart" size={24} color="green" />
+          <FontAwesome5 name="shopping-cart" size={24} color={Colors.lightGreen300} />
           </View>
                 <View style={styles.card1} >
-                <Text style={{...FONTS.body4,color:Colors.grey700}}>View More Here</Text>
-                <AntDesign name="rightcircleo" size={24} color="black" />
+                <Text style={{...FONTS.body4,color:Colors.grey300}}>View More Here</Text>
+                <AntDesign name="rightcircleo" size={24} color={Colors.grey300} />
                 
             </View>
         </View>       
       </TouchableOpacity> 
       </View>       
       <Divider/>
-      <TouchableOpacity style={[styles.card,{backgroundColor:Colors.grey50,alignSelf:'center'}]}>
-   
-        <View style={{width:SIZES.width*0.9,paddingHorizontal:10}}>
-          <Title style={styles.Text}>My Account Settings</Title>
+      <View style={{flexDirection:'row',justifyContent:'space-between',padding:SIZES.padding*0.5}}>
+      <TouchableOpacity style={[styles.card,{backgroundColor:Colors.blue600,width:SIZES.width*0.48}]}
+        onPress = {() => navigation.navigate('selfassigned')}
+      >
+      
+        <View style={{paddingHorizontal:10}}>
+          <Title  style={[styles.Text,{color:Colors.grey100,...FONTS.body3}]}>Self Assigned Orders </Title>
           <View style={styles.card1} >
-            <FontAwesome name="user-circle-o" size={34} color="black" />
-            <View>
-              <Text>Name:{AuthUserRole?.username}</Text>
-              <Text>Email:{AuthUserRole?.Email}</Text>
-             </View>
-            <Fontisto name="player-settings" size={34} color="black" />
+          <AntDesign name="eye" size={30} color={Colors.blue200} />
           </View>
+          
                 <View style={styles.card1} >
-                <Text style={{...FONTS.body3,color:Colors.grey600}}>continue here to view or update my account</Text>
-                <AntDesign name="rightcircleo" size={24} color="black" />
+                <Text style={{...FONTS.body4,color:Colors.grey100}}>View More Here</Text>
+                <AntDesign name="rightcircleo" size={24} color={Colors.grey400} />
+               
             </View>
+            
         </View>       
       </TouchableOpacity> 
       <Divider/>
-      <TouchableOpacity style={[styles.card,{backgroundColor:Colors.grey200}]}>
+      <TouchableOpacity style={[styles.card,{backgroundColor:Colors.cyan800,width:SIZES.width*0.47}]}
+        onPress = {() => navigation.navigate('selfassigned')}
+        >
+   
+        <View style={[styles.card1],{paddingHorizontal:5,}}>
+          <Title style={styles.Text}>My Account Settings</Title>
+          <View style={[styles.card1,{width:SIZES.width*0.46}]} >
+            <FontAwesome name="user-circle-o" size={34} color={Colors.indigo700} />
+            <View>
+              <Text style={{color:Colors.grey300}}>Name:{AuthUserRole?.username}</Text>
+              <Text style={{color:Colors.grey300}}>Email:{AuthUserRole?.Email}</Text>
+             </View>
+          </View>
+               
+        </View>       
+      </TouchableOpacity> 
+      </View>       
+      
+      <TouchableOpacity style={[styles.card,{backgroundColor:COLORS.backgroundColor}]}>
    
    <View style={{width:SIZES.width*0.9,paddingHorizontal:10}}>
-     <Title style={styles.Text}>Finish Current Order Deliverly</Title>
-     
-           <Title>Status:{AuthUserRole?.Status}</Title>
-           <View style={styles.card1} >
-           <Text style={{...FONTS.body3,color:Colors.grey400}}>Switch ToStart Accepting Orders</Text>
-           
-       </View>
+   
    </View>       
  </TouchableOpacity>
     </ScrollView>
@@ -254,9 +275,9 @@ const styles = StyleSheet.create({
     alignItems:'center',
     padding:SIZES.padding2,
     backgroundColor:Colors.grey50,
-    borderColor:Colors.cyan500,
-    borderWidth:1,
-    borderRadius:10
+    borderColor:Colors.cyan900,
+    borderWidth:0.9,
+    borderRadius:0
   },
   card1:{
     flexDirection:'row',
@@ -265,7 +286,7 @@ const styles = StyleSheet.create({
     alignItems:'center'
   },
   Text:{
-    color:Colors.grey700,
+    color:Colors.grey100,
     ...FONTS.body2
   }
 });

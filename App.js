@@ -5,6 +5,7 @@ import { AuthenticatedUserProvider } from './AuthProvider/AuthProvider';
 import RootNavigator from './appStack/RootNavigator';
 import {  DarkTheme as PaperDarkTheme, DefaultTheme, Provider as PaperProvider,Colors } from 'react-native-paper';
 const App = () => {
+  LogBox.ignoreLogs(['Setting a timer']);
      const theme = {
           ...DefaultTheme,
           roundness: 2,

@@ -2,7 +2,7 @@
 
 import React from "react";
 import { createStackNavigator } from '@react-navigation/stack'
-import { AssignedOrder, Home, MyAccount, Orders } from "../screens";
+import { AssignedOrder, CompleteDeliverly, Home, MyAccount, MyDeliverlyHistory, Neworders, Orders, OrderView, SelfAssigned } from "../screens";
 import { COLORS } from "../constants/Index";
 
 const Stack = createStackNavigator();
@@ -21,6 +21,11 @@ const MainStackNavigator = () => {
     <Stack.Navigator screenOptions={screenOptionStyle}>
       <Stack.Screen options={{title: 'Home'}} name="adminHome" component={Home} />
       <Stack.Screen options={{title: 'Current Assigned Order'}} name="viewOrder" component={AssignedOrder} />
+      <Stack.Screen options={{title: 'Finish Current Deliverly'}} name="ordercomplete" component={CompleteDeliverly} />
+      <Stack.Screen options={{title: 'Deliverly History'}} name="deliverlyhistory" component={MyDeliverlyHistory} />
+      <Stack.Screen options={{title: 'NewOrders'}} name="neworders" component={Neworders} />
+      <Stack.Screen options={{title: 'OrderView'}} name="orderview" component={OrderView} />
+      <Stack.Screen options={{title: 'Self Assigned Orders'}} name="selfassigned" component={SelfAssigned} />
     </Stack.Navigator>
   );
 }

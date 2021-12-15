@@ -44,7 +44,7 @@ const AppScreens = ({navigation}) => {
       console.log(e);
     }       
   } 
- 
+ console.log(AuthUserRole);
   
   const acceptOrder = async(key) => {  
     setissubmitting(true)
