@@ -16,6 +16,7 @@ const AssignedOrder = ({route, navigation}) => {
     const {  AuthUserRole} = React.useContext(AuthenticatedUserContext);
     const[orderItem, setOrderItem] = useState('');
     const[products, setProducts] = useState([]);
+    const[deliver, setDeliver] = useState(false)
     const[status, setstatus] = useState('');
     const[orderkey, setorderkey] = useState('');
     const[submitting, setisSubmitting] = useState(false);
@@ -47,7 +48,7 @@ const AssignedOrder = ({route, navigation}) => {
            })           
            setisSubmitting(false)
             alert(`data sent`)
-            navigation.navigate('home')
+            navigation.navigate('adminHome')
          })
         }catch(e){
           console.log(e);
@@ -56,11 +57,13 @@ const AssignedOrder = ({route, navigation}) => {
     const handledeliver = async() => {
         try{
             setisSubmitting(true)
-            const db = Firebase.firestore().collection("Deliverly Persons")
-            await db.doc(AuthUserRole?.key).update({
+            const DB = await Firebase.firestore().collection("Deliverly Persons").doc(AuthUserRole?.key);
+            const Assignedorder = await DB.collection("my Deliveries").doc(orderkey)
+            DB.update({
                 Status:`delivering ${orderItem?.customerName} order`
-            }).then(() =>{
+            }).then(() =>{               
                 setisSubmitting(false)
+                setDeliver(!deliver);
                 alert('updated')
             })
         }catch(e){
@@ -158,7 +161,7 @@ const AssignedOrder = ({route, navigation}) => {
                         </View>  
                          
                     </View>
-                    {AuthUserRole?.Status !== `delivering ${orderItem?.customerName} order`?
+                    {deliver == false ?
                     <>
                     <Text style={[styles.btntext,{...FONTS.body1}]}>Actions:</Text>
                     <Text style={[styles.btntext,{...FONTS.body5}]}>Click this button only if you have picked all items above from the store. ENSURE YOU TRIPPLE CHECK (CORRECT ITEMS AND QUANTITY). IMPORTANT!!:</Text>
@@ -181,7 +184,7 @@ const AssignedOrder = ({route, navigation}) => {
                     <Text></Text>
                         }
                                           {
-                AuthUserRole?.Status === `delivering ${orderItem?.customerName} order`? 
+                   deliver == true? 
                 <>
                 <Text style={[styles.btntext,{...FONTS.body1}]}>Actions:</Text>
                 <Text style={[styles.btntext,{...FONTS.body5}]}>Click this button only if you DELIVERED THIS ORDER. CONFIRM CUSTOMER PAYMENT <Text style={{...FONTS.body2}}>( Ksh {orderItem?.total + 150}.00)</Text> FIRST AND THEN PRESS THIS BUTTON IMPORTANT!!:</Text>

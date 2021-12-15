@@ -32,6 +32,7 @@ const OrderView = ({route, navigation}) => {
      const docId = DB.collection("my Deliveries").doc().id
      await DB.collection("my Deliveries").doc(docId).set({
        orders,
+       orderkey,
        docId,
        status:`Dispatched to ${AuthUserRole.username}`
      }).then(()=>{

@@ -11,45 +11,72 @@ import { Entypo, Ionicons, AntDesign } from '@expo/vector-icons';
 import { Badge, Colors, Divider , ActivityIndicator} from 'react-native-paper';
 
 // create a component
-const myDeliverlyHistory = () => {
+const myDeliverlyHistory = ({navigation}) => {
     const { AuthUserRole} = React.useContext(AuthenticatedUserContext);
     const [Orders, setOrders] = React.useState('');
     const[submitting, setisSubmitting] = useState(false);
     const[isloading, setisloading] = useState(false);
+    const[deliver, setDeliver] = useState(false);
 
     React.useEffect(() =>{
       handleOrderView();
     },[])
-    const handledeliver = async() => {
+    const handledeliver = async(item) => {
       try{
-          setisSubmitting(true)
-          const db = Firebase.firestore().collection("Deliverly Persons")
-          await db.doc(AuthUserRole?.key).update({
-              Status:`delivering ${Orders?.customerName} order`
-          }).then(() =>{
-              setisSubmitting(false)
-              alert('updated')
-          })
-      }catch(e){
-          console.log(e);
-      }
+        setisSubmitting(true)
+        const DB = await Firebase.firestore().collection("Deliverly Persons").doc(AuthUserRole?.key);
+        const Assignedorder = await DB.collection("my Deliveries").doc(item?.key)
+        DB.update({
+            Status:`delivering ${item?.customerName} order`
+        }).then(() =>{             
+            setisSubmitting(false)
+            setDeliver(!deliver);
+            alert('updated')
+        })
+    }catch(e){
+        console.log(e);
+    }
   }
-    
- const handleOrderView = async() =>{
 
+        const handleConpletedelivery= async(item)=>{
+          setisSubmitting(true)
+          try{
+            const orderDb = await Firebase.firestore().collection("CustomerOrder").doc(item?.orderkey);
+          const DB = await Firebase.firestore().collection("Deliverly Persons").doc(AuthUserRole?.key);
+          const Assignedorder = await DB.collection("my Deliveries").doc(item.docId)
+          Assignedorder.update({
+            status:`Complete`
+          }).then(()=>{
+            DB.update({
+              Status:"Active"
+            });
+            orderDb.update({
+              status:`Complete`
+            })           
+            setisSubmitting(false)
+              alert(`Order Completed`)
+              navigation.navigate('adminHome')
+          })
+          }catch(e){
+            console.log(e);
+          }
+      }
+          
+ const handleOrderView = async() =>{
     try{
       setisloading(true);
       const dataArr = []; 
       const response =   Firebase.firestore().collection('Deliverly Persons').doc(AuthUserRole?.key);
       const data = await response.collection("my Deliveries")
-      .where('status',"==", `Dispatched to ${AuthUserRole.username}`).get();
+      .where( 'status',"==", `Dispatched to ${AuthUserRole.username}`).get();
       data.docs.forEach(doc=>{
-        const {orders,status, geohash,docId} = doc.data();
+        const {orders,status,orderkey, geohash,docId} = doc.data();
         dataArr.push({
           key: doc.id,
           geohash,
           customerId:orders.id,
           docId,
+          orderkey,
           status,
           customerName:orders.customerName,
           total:orders.total,
@@ -160,7 +187,7 @@ const myDeliverlyHistory = () => {
               </View>  
                
           </View>
-          {AuthUserRole?.Status !== `delivering ${item?.customerName} order`?
+          {deliver == false? 
           <>
           <Text style={[styles.btntext,{...FONTS.body1}]}>Actions:</Text>
           <Text style={[styles.btntext,{...FONTS.body5}]}>Click this button only if you have picked all items above from the store. ENSURE YOU TRIPPLE CHECK (CORRECT ITEMS AND QUANTITY). IMPORTANT!!:</Text>
@@ -168,15 +195,14 @@ const myDeliverlyHistory = () => {
           <View style={[styles.centered,{paddingHorizontal:SIZES.padding2,alignSelf:'center'}]}> 
           
           <TouchableOpacity
-          onPress={() => handledeliver()}
+          onPress={() => handledeliver(item)}
            style={styles.btnContinue}
            
           >
             {
               submitting ? 
-              <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center', top:40 }}>
               <ActivityIndicator size='large' color={Colors.purple100} />
-            </View>:
+                  :
                 <Text style={[styles.btntext,{...FONTS.h4,color:COLORS.white}]}>Deliver</Text>
             }
            
@@ -189,8 +215,37 @@ const myDeliverlyHistory = () => {
           :
           <Text></Text>
               }
-      </View>
+     
       <Divider/>
+      {
+               deliver == true?  
+                <>
+                <Text style={[styles.btntext,{...FONTS.body1}]}>Actions:</Text>
+                <Text style={[styles.btntext,{...FONTS.body5}]}>Click this button only if you DELIVERED THIS ORDER. CONFIRM CUSTOMER PAYMENT <Text style={{...FONTS.body2}}>( Ksh {item?.total + 150}.00)</Text> FIRST AND THEN PRESS THIS BUTTON IMPORTANT!!:</Text>
+
+                <View style={[styles.centered,{paddingHorizontal:SIZES.padding2,alignSelf:'center'}]}> 
+                
+                <TouchableOpacity
+                onPress={() => handleConpletedelivery(item)}
+                 style={[styles.btnContinue,{backgroundColor:Colors.lightBlue600}]}
+                 
+                >
+                     {
+                        submitting ? 
+                        <ActivityIndicator size='small' color={Colors.purple100} />:
+                          <Text style={[styles.btntext,{...FONTS.h4,color:COLORS.white}]}>Complete Delivery</Text>
+                        }
+                 
+                 
+                  
+                </TouchableOpacity>
+                
+                </View>
+                </>
+                :
+                <Text></Text>
+                  }
+                   </View>
   </View>
      
     )
